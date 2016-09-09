@@ -234,7 +234,7 @@ class Repository extends BaseRepository {
      * Check if a directory is a valid Git repository
      */
     public function checkIsValidRepo() {
-        if (!file_exists($this->dir . '/.git/HEAD')) {
+        if (!file_exists($this->dir . $this->options['file_config'] . 'HEAD')) {
             throw new InvalidGitRepositoryDirectoryException($this->dir . ' is not a valid Git repository');
         }
     }
