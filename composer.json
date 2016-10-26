@@ -1,7 +1,7 @@
 {
     "name": "endeavors/bit-bucket-web-hook",
     "description": "A simple bitbucket webhook for Laravel apps",
-    "keywords": ["bitbucket","webhook", "laravel"],
+    "keywords": ["bitbucket","webhook","bitbucket webhook","laravel bitbucket webhook"],
     "authors": [
         {
             "name": "adam",
