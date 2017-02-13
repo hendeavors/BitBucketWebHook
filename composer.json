@@ -10,9 +10,9 @@
     ],
     "require": {
         "php": ">=5.3.0",
-        "illuminate/support": "4.1.*",
-        "illuminate/filesystem": "4.1.*",
-        "illuminate/http" : "4.1.*",
+        "illuminate/support": "4.2.*",
+        "illuminate/filesystem": "4.2.*",
+        "illuminate/http" : "4.2.*",
         "itsis/php-git-hg-repo" : "dev-master"
     },
     "require-dev": {
@@ -32,7 +32,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.0.x-dev"
+            "dev-master": "1.1.x-dev"
         }
     }
 }
