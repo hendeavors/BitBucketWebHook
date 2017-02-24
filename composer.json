@@ -12,7 +12,7 @@
         "php": ">=5.5.9",
         "illuminate/http": "5.2.*",
         "illuminate/filesystem": "5.2.*",
-        "illuminate/http": "5.2.*",
+        "illuminate/support": "5.2.*",
         "illuminate/routing": "5.2.*",
         "itsis/php-git-hg-repo" : "dev-master"
     },
@@ -20,7 +20,7 @@
         "phpseclib/phpseclib": ">=0.3.7",
         "phpunit/phpunit": "~4.0",
         "mockery/mockery": "~0.9",
-        "orchestra/testbench": "2.2.x"
+        "orchestra/testbench": "3.2.x"
     },
     "autoload": {
         "classmap": [
