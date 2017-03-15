@@ -22,7 +22,9 @@ class BitBucketWebHookServiceProvider extends ServiceProvider {
 	 */
 	public function boot()
 	{
-		$this->package('endeavors/bit-bucket-web-hook');
+		$this->publishes([
+            __DIR__.'/../../config/config.php' => config_path('bitbucketwebhook.php'),
+        ]);
 	}
 
 	/**
@@ -33,16 +35,12 @@ class BitBucketWebHookServiceProvider extends ServiceProvider {
 
 	public function register()
 	{
-        
-
         $app = $this->app;
-        $app['config']->package('endeavors/bit-bucket-web-hook', $this->guessPackagePath() . '/config');
-
-        $app['web_hook.options'] = array_replace(
-            array(
-                'debug' => $app['config']->get('app.debug'),
-            ), $app['config']->get('bit-bucket-web-hook::config.options')
+        $this->mergeConfigFrom(
+            __DIR__.'/../../config/config.php', 'bitbucketwebhook'
         );
+
+        $app['web_hook.options'] = config('bitbucketwebhook.options');
 
         $app['web_hook.options.defaultRoutePrefix'] = $app['web_hook.options']['defaultRoutePrefix'];
 
@@ -102,7 +100,7 @@ class BitBucketWebHookServiceProvider extends ServiceProvider {
 
         $this->app->bind("bitbucketwebhook.generate.key", function() use($that)
         {
-            return new Commands\SecretKeyGenerateCommand( new \Illuminate\Filesystem\Filesystem, $that->guessPackagePath(), $that->app['config']->get('bit-bucket-web-hook::config')  );
+            return new Commands\SecretKeyGenerateCommand( new \Illuminate\Filesystem\Filesystem, __DIR__.'/../../' , $that->app['config']->get('bit-bucket-web-hook::config')  );
         });
 
 
