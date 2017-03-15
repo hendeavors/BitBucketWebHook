@@ -1,4 +1,4 @@
-A small bitbucket webhook package with minimal setup for Laravel 4.1
+A small bitbucket webhook package with minimal setup for Laravel 5.2
 
 Publish configuration:
 ```
