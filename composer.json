@@ -32,7 +32,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-develop": "1.2.x-dev"
+            "dev-webhook": "1.2.x-dev"
         }
     }
 }
