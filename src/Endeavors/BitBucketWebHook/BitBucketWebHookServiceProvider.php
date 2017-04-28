@@ -46,13 +46,13 @@ class BitBucketWebHookServiceProvider extends ServiceProvider {
 
         $app['web_hook.options.defaultRoutePattern'] = $app['web_hook.options']['defaultRoutePattern'];
 
-        $app['web_hook.branch'] = $app['config']->get('bit-bucket-web-hook::config.branch');
+        $app['web_hook.branch'] = config('bitbucketwebhook.branch');
 
-        $app['web_hook.key'] = $app['config']->get('bit-bucket-web-hook::config.key');
+        $app['web_hook.key'] = config('bitbucketwebhook.key');
 
-        $app['web_hook.gitrepo'] = $app['config']->get('bit-bucket-web-hook::config.path_to_git_repo');
+        $app['web_hook.gitrepo'] = config('bitbucketwebhook.path_to_git_repo');
 
-        $app['web_hook.remote_alias'] = $app['config']->get('bit-bucket-web-hook::config.remote_alias');
+        $app['web_hook.remote_alias'] = config('bitbucketwebhook.remote_alias');
         
         // Define push request
         $app['web_hook.pushrequest'] = $app->share(function ($app) {
