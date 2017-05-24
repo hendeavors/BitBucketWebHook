@@ -61,7 +61,7 @@ class Repository extends BaseRepository {
 
         $config = new Configuration($this);
 
-        $config->setOriginUrl($options['login'], $options['password'], $options['repository']);
+        //$config->setOriginUrl($options['login'], $options['password'], $options['repository']);
     }
 
     public function __destruct() {
