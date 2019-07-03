@@ -17,14 +17,38 @@ use PHPGit\Repository as BaseRepository;
  * Documentation: http://github.com/ornicar/php-git-repo/blob/master/README.markdown
  * Tickets:       http://github.com/ornicar/php-git-repo/issues
  */
-class Repository extends BaseRepository {
-
+class Repository extends BaseRepository
+{
     /**
      * @var string  local repository directory
      */
     protected $dir;
     protected $dateFormat = 'iso';
     protected $logFormat = '"%H|%T|%an|%ae|%ad|%cn|%ce|%cd|%s"';
+
+    /**
+     * For security reasons we may with to only allow a few commands
+     * @var array
+     */
+    protected $allowGitCommands = [
+        'status',
+        'checkout',
+        'pull'
+    ];
+
+    protected $validGitCommands = [
+        'status',
+        'checkout',
+        'checkout -b',
+        'checkout -',
+        'checkout --',
+        'clone'
+        'add',
+        'branch',
+        'push',
+        'merge',
+        'pull'
+    ];
 
     /**
      * @var boolean Whether to enable debug mode or not
@@ -60,12 +84,6 @@ class Repository extends BaseRepository {
         $this->checkIsValidRepo();
 
         $config = new Configuration($this);
-
-        //$config->setOriginUrl($options['login'], $options['password'], $options['repository']);
-    }
-
-    public function __destruct() {
-        //$this->clearConfiguration();
     }
 
     /**
@@ -125,7 +143,8 @@ class Repository extends BaseRepository {
      * Get the configuration for current
      * @return Configuration
      */
-    public function getConfiguration() {
+    public function getConfiguration()
+    {
         return new Configuration($this);
     }
 
@@ -133,7 +152,8 @@ class Repository extends BaseRepository {
      * Clear the configuration for current
      * @return Configuration
      */
-    public function clearConfiguration() {
+    public function clearConfiguration()
+    {
         return $this->getConfiguration()->remove();
     }
 
@@ -142,16 +162,18 @@ class Repository extends BaseRepository {
      *
      * @return array list of branches names
      */
-    public function getBranches($flags = '') {
+    public function getBranches($flags = '')
+    {
         return array_filter(preg_replace('/[\s\*]/', '', explode("\n", $this->cmd('branch ' . $flags))));
     }
 
     /*
      * Set branch
-     * 
+     *
      * @return output
      */
-    public function setBranch($options = "") {
+    public function setBranch($options = "")
+    {
         $output = $this->cmd(sprintf("checkout %s -f", $options));
         return $output;
     }
@@ -161,7 +183,8 @@ class Repository extends BaseRepository {
      *
      * @return string the current branch name
      */
-    public function getCurrentBranch() {
+    public function getCurrentBranch()
+    {
         $output = $this->cmd('branch');
 
         foreach (explode("\n", $this->cmd('branch')) as $branchLine) {
@@ -176,7 +199,8 @@ class Repository extends BaseRepository {
      *
      * @return  boolean true if the branch exists, false otherwise
      */
-    public function hasBranch($branchName) {
+    public function hasBranch($branchName)
+    {
         return in_array($branchName, $this->getBranches());
     }
 
@@ -185,7 +209,8 @@ class Repository extends BaseRepository {
      *
      * @return array list of tag names
      */
-    public function getTags() {
+    public function getTags()
+    {
         $output = $this->cmd('tag');
         return $output ? array_filter(explode("\n", $output)) : array();
     }
@@ -195,7 +220,8 @@ class Repository extends BaseRepository {
      *
      * @return array list of commits and their properties
      * */
-    public function getCommits($nbCommits = 10) {
+    public function getCommits($nbCommits = 10)
+    {
         $output = $this->cmd(sprintf('log -n %d --date=%s --format=format:%s', $nbCommits, $this->dateFormat, $this->logFormat));
         return $this->parseLogsIntoArray($output);
     }
@@ -204,11 +230,12 @@ class Repository extends BaseRepository {
      * Convert a formatted log string into an array
      * @param string $logOutput The output from a `git log` command formated using $this->logFormat
      */
-    private function parseLogsIntoArray($logOutput) {
+    private function parseLogsIntoArray($logOutput)
+    {
         $commits = array();
-        
+
         $output  = ( is_string($logOutput) && empty($logOutput['output']) ) ? $logOutput :  ! empty($logOutput['output']) ? $logOutput['output'] : '||||||||||';
-        
+
         foreach (explode("\n", $output) as $line) {
             $infos = explode('|', $line);
             $commits[] = array(
@@ -233,7 +260,8 @@ class Repository extends BaseRepository {
     /**
      * Check if a directory is a valid Git repository
      */
-    public function checkIsValidRepo() {
+    public function checkIsValidRepo()
+    {
         if (!file_exists($this->dir . $this->options['file_config'] . 'HEAD')) {
             throw new InvalidGitRepositoryDirectoryException($this->dir . ' is not a valid Git repository');
         }
@@ -244,7 +272,8 @@ class Repository extends BaseRepository {
      *
      * @return array list of commits and their properties
      * */
-    public function update($options = "") {
+    public function update($options = "")
+    {
         $output = $this->cmd(sprintf('checkout %s', $options));
         return $output;
     }
@@ -252,7 +281,8 @@ class Repository extends BaseRepository {
     /**
      * Back to "x" version
      */
-    public function backupVersion($options = "") {
+    public function backupVersion($options = "")
+    {
         $output = $this->cmd(sprintf("checkout %s -f", $options));
         return $output;
     }
@@ -261,7 +291,8 @@ class Repository extends BaseRepository {
      * Return the result of `hg pull` formatted in a PHP array
      * @return test about pulling
      * */
-    public function pull($options = "") {
+    public function pull($options = "")
+    {
         try {
             $output = $this->cmd(sprintf('pull %s', $options));
             return $output;
@@ -282,7 +313,8 @@ class Repository extends BaseRepository {
     /**
      * Check if they are  local files modified
      */
-    public function checkFiles($options = "-m") {
+    public function checkFiles($options = "-m")
+    {
 
         try {
             $output = $this->cmd(sprintf('ls-files %s', $options));
@@ -299,10 +331,26 @@ class Repository extends BaseRepository {
         }
     }
 
+    public function checkoutCurrent()
+    {
+        return $this->cmd("checkout -- .");
+    }
+
+    public function addAll()
+    {
+        return $this->cmd("add -A");
+    }
+
+    public function status()
+    {
+        return $this->cmd("status");
+    }
+
     /**
      * Clean local modified files
      */
-    public function updateClean($options = "--hard") {
+    public function updateClean($options = "--hard")
+    {
         $output = $this->cmd(sprintf('reset %s', $options));
         return $output;
     }
@@ -314,7 +362,8 @@ class Repository extends BaseRepository {
      * @param   string  $commandString
      * @return  string  $output
      */
-    public function cmd($commandString) {
+    public function cmd($commandString)
+    {
         // clean commands that begin with "git "
         $commandString = preg_replace('/^git\s/', '', $commandString);
         $commandString = $this->options['git_executable'] . ' ' . $commandString;
@@ -328,12 +377,13 @@ class Repository extends BaseRepository {
      *
      * @return  string  the repository directory
      */
-    public function getDir() {
+    public function getDir()
+    {
         return $this->dir;
     }
 
 }
 
 class InvalidGitRepositoryDirectoryException extends \InvalidArgumentException {
-    
+
 }

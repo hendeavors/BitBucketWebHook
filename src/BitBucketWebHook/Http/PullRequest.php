@@ -1,12 +1,14 @@
-<?php namespace Endeavors\BitBucketWebHook\Http;
+<?php
 
-use Illuminate\Http\Request as LaravelRequest;
+namespace Endeavors\BitBucketWebHook\Http;
 
-class PullRequest extends LaravelRequest {
+use Illuminate\Http\Request;
 
+class PullRequest extends Request
+{
     /**
      * The request body from bitbucket is json. We'll
-     * Use LaravalRequest to get our json input properly formatted
+     * Use Illuminate\Http\Request to get our json input properly formatted
      * Request::getPull will get our pullrequest event request
      * @return array
      */
@@ -14,7 +16,7 @@ class PullRequest extends LaravelRequest {
 	{
 		return $this->json('pullrequest');
 	}
-    
+
     /**
      * Get the pull request destination
      * @return array
@@ -30,7 +32,7 @@ class PullRequest extends LaravelRequest {
 
         return $results;
 	}
-    
+
     /**
      * Get the pull request source
      * @return array
@@ -49,15 +51,14 @@ class PullRequest extends LaravelRequest {
 
     /**
      * We'll need to know the branch name to perform the operation on
-     * 
+     *
      * @return string|null
      */
 	public function getDestinationBranchName()
 	{
         $result = null;
 
-        if( null !== $this->getPull() )
-        {
+        if (null !== $this->getPull()) {
         	$result = $this->getDestination()['branch']['name'];
         }
 
@@ -66,7 +67,7 @@ class PullRequest extends LaravelRequest {
 
     /**
      * We'll need to know the branch name to perform the operation on
-     * 
+     *
      * @return string|null
      */
 	public function getSourceBranchName()

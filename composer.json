@@ -9,31 +9,30 @@
         }
     ],
     "require": {
-        "php": ">=5.5.9",
-        "illuminate/http": "5.2.*",
-        "illuminate/filesystem": "5.2.*",
-        "illuminate/support": "5.2.*",
-        "illuminate/routing": "5.2.*",
+        "php": ">=7.0",
+        "illuminate/http": "5.5.*",
+        "illuminate/filesystem": "5.5.*",
+        "illuminate/routing": "5.5.*",
         "itsis/php-git-hg-repo" : "dev-master"
     },
     "require-dev": {
         "phpseclib/phpseclib": ">=0.3.7",
-        "phpunit/phpunit": "~4.0",
-        "mockery/mockery": "~0.9",
-        "orchestra/testbench": "3.2.x"
+        "phpunit/phpunit": "~6.0",
+        "mockery/mockery": "~0.9"
     },
     "autoload": {
-        "classmap": [
-            "src/migrations",
-            "src/Endeavors/BitBucketWebHook"
-        ],
-        "psr-0": {
+        "psr-4": {
             "Endeavors\\BitBucketWebHook\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Endeavors\\BitBucketWebHook\\Tests\\": "tests/"
         }
     },
     "extra": {
         "branch-alias": {
-            "dev-develop-2.1": "2.1.x-dev"
+            "dev-master": "3.0.x-dev"
         }
     }
 }
