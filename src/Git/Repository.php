@@ -17,7 +17,7 @@ use PHPGit\Repository as BaseRepository;
  * Documentation: http://github.com/ornicar/php-git-repo/blob/master/README.markdown
  * Tickets:       http://github.com/ornicar/php-git-repo/issues
  */
-class Repository extends BaseRepository
+class Repository
 {
     /**
      * @var string  local repository directory
@@ -42,7 +42,7 @@ class Repository extends BaseRepository
         'checkout -b',
         'checkout -',
         'checkout --',
-        'clone'
+        'clone',
         'add',
         'branch',
         'push',
@@ -76,14 +76,59 @@ class Repository extends BaseRepository
      * @param   boolean $debug
      * @param   array $options
      */
-    public function __construct($dir, $debug = false, array $options = array()) {
+    public function __construct($dir, $debug = false, array $options = array())
+    {
         $this->dir = $dir;
         $this->debug = $debug;
         $this->options = array_merge(self::$defaultOptions, $options);
+        $this->options['git_executable'] = $this->formatGitExecutablePath($this->options['git_executable']);
+    }
 
-        $this->checkIsValidRepo();
+    public function customizeOptions(array $options = [])
+    {
+        return new static($this->dir, $this->debug, array_merge($this->options, $options));
+    }
 
-        $config = new Configuration($this);
+    public function usingDebug()
+    {
+        return new static($this->dir, true, $this->options);
+    }
+
+    protected function formatGitExecutablePath(string $executablePath)
+    {
+        // \"C:\Program Files\Git\cmd\git.exe\"
+        // '"C:\Program Files\Git\bin\git"'
+        if ($this->executablePathIsNotWrapped($executablePath) && $executablePath !== static::$defaultOptions['git_executable']) {
+            $executablePath = addslashes($executablePath);
+            // windows only solution???
+            $executablePath = "\"" . $executablePath . "\"";
+        }
+
+        return $executablePath;
+    }
+
+    protected function isWrappedInQuote(string $executablePath, string $quote)
+    {
+        $length = strlen($executablePath);
+
+        return $executablePath[0] === $quote && $executablePath[$length-1] === $quote;
+    }
+
+    protected function isWrappedInDoubleQuote(string $executablePath)
+    {
+        return $this->isWrappedInQuote($executablePath, "\"");
+    }
+
+    protected function isWrappedInSingleQuote(string $executablePath)
+    {
+        return $this->isWrappedInQuote($executablePath, '\'');
+    }
+
+    protected function executablePathIsNotWrapped(string $executablePath)
+    {
+        $isWrapped = $this->isWrappedInDoubleQuote($executablePath) || $this->isWrappedInSingleQuote($executablePath);
+
+        return !$isWrapped;
     }
 
     /**
@@ -364,8 +409,10 @@ class Repository extends BaseRepository
      */
     public function cmd($commandString)
     {
+        var_dump($commandString);
         // clean commands that begin with "git "
         $commandString = preg_replace('/^git\s/', '', $commandString);
+        var_dump($commandString);
         $commandString = $this->options['git_executable'] . ' ' . $commandString;
         $command = new Command($this->dir, $commandString, $this->debug);
 
